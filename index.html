@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swift Market | القصص والتجارة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #05070f; color: #f1f5f9; font-family: sans-serif; }
+        .glass { background: rgba(21, 31, 50, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .cube-card { transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .cube-card:hover { border-color: #3b82f6; transform: translateY(-2px); }
+    </style>
+</head>
+<body class="p-4 md:p-6 min-h-screen">
+
+    <header class="max-w-5xl mx-auto flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-black text-blue-500">SWIFT<span class="text-white">MARKET</span></h1>
+        <button onclick="document.getElementById('adminPanel').classList.toggle('hidden')" class="text-[10px] bg-slate-800 px-3 py-1 rounded-full">إدارة</button>
+    </header>
+
+    <!-- لوحة التحكم -->
+    <div id="adminPanel" class="hidden max-w-5xl mx-auto glass p-6 rounded-2xl mb-8 border border-blue-500/30">
+        <h2 class="font-bold mb-4 text-blue-400">⚙️ مركز تحكم</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input id="pTitle" placeholder="اسم المنتج" class="bg-black p-2 rounded border border-white/10 text-sm">
+            <input id="pPrice" placeholder="السعر" class="bg-black p-2 rounded border border-white/10 text-sm">
+            <input type="file" id="pImage" class="bg-black p-2 rounded border border-white/10 text-[10px]">
+            <button onclick="addProduct()" class="bg-blue-600 p-2 rounded font-bold text-sm">إضافة المنتج</button>
+        </div>
+    </div>
+
+    <!-- قسم القصص -->
+    <div class="max-w-5xl mx-auto mb-10">
+        <h2 class="text-xl font-bold mb-4 text-blue-400">📖 ركن القصص الملهمة</h2>
+        <div class="glass p-4 rounded-2xl border border-blue-900/50 flex gap-4">
+            <div class="w-20 h-28 bg-slate-800 rounded flex items-center justify-center text-[10px]">ود العمدة</div>
+            <div>
+                <h3 class="font-bold text-sm">قصة نجاح: ود العمدة</h3>
+                <p class="text-[10px] text-gray-400 mt-1">القصة اللي غيرت مفهوم التجارة في السودان...</p>
+                <button onclick="alert('ود العمدة: النجاح بيبدأ بأداة صح!')" class="mt-2 text-[10px] text-blue-400 font-bold underline">اقرأ المزيد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شبكة المنتجات -->
+    <main class="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="grid"></main>
+
+    <script>
+        let products = JSON.parse(localStorage.getItem('myProducts') || "[]");
+        function addProduct() {
+            let title = document.getElementById('pTitle').value;
+            let price = document.getElementById('pPrice').value;
+            let file = document.getElementById('pImage').files[0];
+            if(!title || !price || !file) return alert("املا البيانات!");
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                products.push({ title, price, img: e.target.result });
+                localStorage.setItem('myProducts', JSON.stringify(products));
+                location.reload();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        const grid = document.getElementById('grid');
+        grid.innerHTML = products.map(p => `
+            <div class="cube-card glass p-3 rounded-xl flex flex-col">
+                <img src="${p.img}" class="h-24 w-full object-cover rounded-lg mb-3">
+                <h3 class="text-xs font-bold truncate">${p.title}</h3>
+                <p class="text-green-400 font-bold text-[10px] mb-3">${p.price} ج.س</p>
+                <button onclick="window.open('https://wa.me/249900000000?text=أنا مهتم بـ: ${p.title}')" class="w-full bg-blue-600 py-1.5 rounded-lg text-[10px] font-bold">شراء بذكاء</button>
+            </div>
+        `).join('');
+    </script>
+</body>
+</html>
